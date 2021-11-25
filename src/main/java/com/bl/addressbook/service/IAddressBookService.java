@@ -13,7 +13,7 @@ public interface IAddressBookService {
 
 	User addUser(UserDTO user);
 
-	User editUser(UserDTO user);
+	User editUser(long id, UserDTO user);
 
 	void deleteUser(long id);
 
