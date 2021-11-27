@@ -167,7 +167,7 @@ public class AddressBookServiceImpl implements IAddressBookService {
 				throw new LoginException("Wrong Password!");
 			}
 		} else {
-			throw new UserNotFoundException("User Not Found");
+			throw new UserNotFoundException("User not exist");
 		}
 	}
 
