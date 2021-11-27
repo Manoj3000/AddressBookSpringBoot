@@ -27,6 +27,8 @@ public class User {
 
 	private String name;
 	private String mobileNumber;
+	private String username;
+	private String password;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonManagedReference
@@ -38,7 +40,9 @@ public class User {
 	public User(UserDTO user) {
 		this.name = user.getName();
 		this.mobileNumber = user.getMobileNumber();
-		this.address = user.getAddress();
+		this.username = user.getUsername();
+		this.password = user.getPassword();
+		this.address = new Address(user.getAddress());
 		this.created_at = LocalDateTime.now();
 	}
 }

@@ -17,6 +17,11 @@ public class GlobalExceptionHandler{
 	public ResponseEntity<String> userAlreadyExistsException(UserAlreadyExistsException userAlreadyExistsException) {
 		return new ResponseEntity<String>("User already exists", HttpStatus.CONFLICT);
 	}
+	
+	@ExceptionHandler(value = LoginException.class)
+	public ResponseEntity<String> userAlreadyExistsException(LoginException loginException) {
+		return new ResponseEntity<String>(loginException.getMessage(), HttpStatus.UNAUTHORIZED);
+	}
 
 	public ResponseEntity<Object> databaseConnectionFailsException(Exception exception) {
 		return new ResponseEntity<>("DB Connection Lost", HttpStatus.INTERNAL_SERVER_ERROR);
