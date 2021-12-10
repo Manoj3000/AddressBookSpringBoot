@@ -27,7 +27,7 @@ public class User {
 
 	private String name;
 	private String mobileNumber;
-	private String username;
+	private String email;
 	private String password;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
@@ -40,7 +40,7 @@ public class User {
 	public User(UserDTO user) {
 		this.name = user.getName();
 		this.mobileNumber = user.getMobileNumber();
-		this.username = user.getUsername();
+		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.address = new Address(user.getAddress());
 		this.created_at = LocalDateTime.now();

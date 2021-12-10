@@ -11,13 +11,13 @@ public interface IAddressBookService {
 
 	List<User> getUsers(String isLogin) throws LoginException;
 
-	User getUser(String isLogin, String token) throws LoginException, UserNotFoundException;
+	User getUser(String isLogin, long id) throws LoginException, UserNotFoundException;
 
 	User addUser(String isLogin, UserDTO user)  throws LoginException;
 
-	User editUser(String isLogin, String token, UserDTO user) throws LoginException, UserNotFoundException;
+	User editUser(String isLogin, long id, UserDTO user) throws LoginException, UserNotFoundException;
 
-	void deleteUser(String isLogin, String token) throws LoginException, UserNotFoundException;
+	void deleteUser(String isLogin, long id) throws LoginException, UserNotFoundException;
 
 	List<User> findUserByCity(String isLogin, String city) throws LoginException;
 
@@ -31,8 +31,8 @@ public interface IAddressBookService {
 
 	List<User> sortDescUser(String isLogin, String key) throws LoginException;
 
-	String checkUser(String username, String password) throws UserNotFoundException, LoginException;
+	String checkUser(String email, String password) throws UserNotFoundException, LoginException;
 
-
+	void deleteUsers(String isLogin, List<Long> ids) throws LoginException;
 
 }

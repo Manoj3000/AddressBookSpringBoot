@@ -15,6 +15,9 @@ public interface AddressBookRepo extends JpaRepository<User, Long> {
 	@Query(value = "SELECT * FROM user WHERE mobile_number = ?1", nativeQuery = true)
 	User existsByUsermobileNumber(String mobileNumber);
 	
+	@Query(value = "SELECT * FROM user WHERE email = ?1", nativeQuery = true)
+	User existsByUserEmail(String mobileNumber);
+	
 	@Query(value = "Select * from user left join address on user.id=address.user_id where address.city = ?1", nativeQuery = true)
 	List<User> findByCity(String city);
 

@@ -11,6 +11,9 @@ public class AddressDTO {
 	@NotBlank(message = "Area cannot be empty")
 	private String area;
 	
+	@NotBlank(message = "Street cannot be empty")
+	private String street;
+	
 	@NotBlank(message = "City cannot be empty")
 	private String city;
 	

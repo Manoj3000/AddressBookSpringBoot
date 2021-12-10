@@ -28,6 +28,7 @@ public class Address {
 	private long address_id;
 	
 	private String area;
+	private String street;
 	private String city;
 	private String state;
 	private String country;
@@ -43,6 +44,7 @@ public class Address {
 
 	public Address(AddressDTO address) {
 		this.area = address.getArea();
+		this.street = address.getStreet();
 		this.city = address.getCity();
 		this.state = address.getState();
 		this.country = address.getCountry();

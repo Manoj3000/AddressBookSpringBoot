@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ import com.bl.addressbook.service.IAddressBookService;
 import com.bl.addressbook.util.TokenUtil;
 
 @RestController
+@CrossOrigin
 public class AddressBookController {
 	
 	@Autowired
@@ -39,8 +41,8 @@ public class AddressBookController {
 	TokenUtil tokenutil;
 
 	@GetMapping("/login")
-	public ResponseEntity<Response> checkUser(@RequestHeader String username, @RequestHeader String password) throws UserNotFoundException, LoginException{
-		String isLogin = addressBookService.checkUser(username, password);
+	public ResponseEntity<Response> checkUser(@RequestHeader String email, @RequestHeader String password) throws UserNotFoundException, LoginException{
+		String isLogin = addressBookService.checkUser(email, password);
 		Response response = new Response("Login successfully",(long)200, isLogin);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -53,8 +55,8 @@ public class AddressBookController {
 	}
 	
 	@GetMapping("/getUser")
-	public ResponseEntity<Response> getUser(@RequestHeader String isLogin,@RequestHeader String token) throws UserNotFoundException, LoginException {
-		User user = addressBookService.getUser(isLogin, token);
+	public ResponseEntity<Response> getUser(@RequestHeader String isLogin, @RequestHeader long id) throws UserNotFoundException, LoginException {
+		User user = addressBookService.getUser(isLogin, id);
 		Response response = new Response("Get user successfully ",(long)200, user);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -67,16 +69,23 @@ public class AddressBookController {
 	}
 	
 	@PutMapping("/editUser")
-	public ResponseEntity<Response> editUser(@RequestHeader String isLogin, @RequestHeader String token, @Valid @RequestBody UserDTO user) throws UserNotFoundException, LoginException {
-		User updatedUser = addressBookService.editUser(isLogin, token, user);
+	public ResponseEntity<Response> editUser(@RequestHeader String isLogin, @RequestHeader long id, @Valid @RequestBody UserDTO user) throws UserNotFoundException, LoginException {
+		User updatedUser = addressBookService.editUser(isLogin, id, user);
 		Response response = new Response("Updated user successfully",(long)200, updatedUser);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/deleteUser")
-	public ResponseEntity<Response> deleteUser(@RequestHeader String isLogin, @RequestHeader String token) throws UserNotFoundException, LoginException {
-		addressBookService.deleteUser(isLogin,token);
+	public ResponseEntity<Response> deleteUser(@RequestHeader String isLogin, @RequestHeader long id) throws UserNotFoundException, LoginException {
+		addressBookService.deleteUser(isLogin,id);
 		Response response = new Response("Deleted user successfully",(long)200, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/deleteUsers")
+	public ResponseEntity<Response> deleteUsers(@RequestHeader String isLogin, @RequestHeader List<Long> ids) throws UserNotFoundException, LoginException {
+		addressBookService.deleteUsers(isLogin,ids);
+		Response response = new Response("Deleted users successfully",(long)200, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	

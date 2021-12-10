@@ -35,9 +35,9 @@ public class AddressBookServiceImpl implements IAddressBookService {
 	}
 
 	@Override
-	public User getUser(String isLogin, String token) throws UserNotFoundException, LoginException {
+	public User getUser(String isLogin, long id) throws UserNotFoundException, LoginException {
 		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
-			Long id = tokenUtil.decodeToken(token);
+//			Long id = tokenUtil.decodeToken(token);
 			if (addressBookRepo.existsById(id)) {
 				return addressBookRepo.findById(id).get();
 			} else {
@@ -51,8 +51,9 @@ public class AddressBookServiceImpl implements IAddressBookService {
 
 	@Override
 	public User addUser(String isLogin, UserDTO userDTO) throws LoginException {
-//		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
-			if (addressBookRepo.existsByUsermobileNumber(userDTO.getMobileNumber()) == null) {
+		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
+			if (addressBookRepo.existsByUsermobileNumber(userDTO.getMobileNumber()) == null
+					&& addressBookRepo.existsByUserEmail(userDTO.getEmail()) == null) {
 				User user = new User(userDTO);
 				Address address = user.getAddress();
 
@@ -63,26 +64,27 @@ public class AddressBookServiceImpl implements IAddressBookService {
 			} else {
 				throw new UserAlreadyExistsException();
 			}
-//		} else {
-//			throw new LoginException("Access Denied");
-//		}
+		} else {
+			throw new LoginException("Access Denied");
+		}
 
 	}
 
 	@Override
-	public User editUser(String isLogin, String token, UserDTO userDTO) throws UserNotFoundException, LoginException {
+	public User editUser(String isLogin, long id, UserDTO userDTO) throws UserNotFoundException, LoginException {
 		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
-			Long id = tokenUtil.decodeToken(token);
+//			Long id = tokenUtil.decodeToken(token);
 			if (addressBookRepo.findById(id).isPresent()) {
 				User getUser = addressBookRepo.findById(id).get();
 				getUser.setName(userDTO.getName());
 				getUser.setMobileNumber(userDTO.getMobileNumber());
-				getUser.setUsername(userDTO.getUsername());
+				getUser.setEmail(userDTO.getEmail());
 				getUser.setPassword(userDTO.getPassword());
 				getUser.setUpdated_at(LocalDateTime.now());
 
 				Address address = getUser.getAddress();
 				address.setArea(userDTO.getAddress().getArea());
+				address.setStreet(userDTO.getAddress().getStreet());
 				address.setCity(userDTO.getAddress().getCity());
 				address.setState(userDTO.getAddress().getState());
 				address.setCountry(userDTO.getAddress().getCountry());
@@ -103,9 +105,9 @@ public class AddressBookServiceImpl implements IAddressBookService {
 	}
 
 	@Override
-	public void deleteUser(String isLogin, String token) throws UserNotFoundException, LoginException {
+	public void deleteUser(String isLogin, long id) throws UserNotFoundException, LoginException {
 		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
-			Long id = tokenUtil.decodeToken(token);
+//			Long id = tokenUtil.decodeToken(token);
 			if (addressBookRepo.findById(id).isPresent()) {
 				User user = addressBookRepo.findById(id).get();
 				addressBookRepo.delete(user);
@@ -115,7 +117,20 @@ public class AddressBookServiceImpl implements IAddressBookService {
 		} else {
 			throw new LoginException("Access Denied");
 		}
+	}
 
+	@Override
+	public void deleteUsers(String isLogin, List<Long> ids) throws LoginException {
+		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
+//			Long id = tokenUtil.decodeToken(token);
+			ids.forEach(id -> {
+				if (addressBookRepo.existsById(id)) {
+					addressBookRepo.deleteById(id);
+				}
+			});
+		} else {
+			throw new LoginException("Access Denied");
+		}
 	}
 
 	@Override
@@ -145,7 +160,6 @@ public class AddressBookServiceImpl implements IAddressBookService {
 		} else {
 			throw new LoginException("Access Denied");
 		}
-
 	}
 
 	@Override
@@ -158,8 +172,8 @@ public class AddressBookServiceImpl implements IAddressBookService {
 	}
 
 	@Override
-	public String checkUser(String username, String password) throws UserNotFoundException, LoginException {
-		User user = addressBookRepo.findByUsername(username);
+	public String checkUser(String email, String password) throws UserNotFoundException, LoginException {
+		User user = addressBookRepo.existsByUserEmail(email);
 		if (user != null) {
 			if (user.getPassword().equals(password)) {
 				return tokenUtil.createToken(user.getId());
@@ -174,7 +188,7 @@ public class AddressBookServiceImpl implements IAddressBookService {
 	@Override
 	public List<User> sortAscUser(String isLogin, String key) throws LoginException {
 		if (addressBookRepo.findById(tokenUtil.decodeToken(isLogin)).isPresent()) {
-			return addressBookRepo.findAll(Sort.by(Sort.Direction.ASC, key));			
+			return addressBookRepo.findAll(Sort.by(Sort.Direction.ASC, key));
 		} else {
 			throw new LoginException("Access Denied");
 		}
